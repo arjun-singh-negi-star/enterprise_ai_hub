@@ -1,0 +1,149 @@
+[
+    {
+        "timestamp": "2026-05-22T10:07:16.774576Z",
+        "agent": "Supervisor Node",
+        "model_version": "gemini-1.5-flash",
+        "action": "Intent Classified as [RFQ]",
+        "details": "Secured 0 PII tokens."
+    },
+    {
+        "timestamp": "2026-05-22T10:07:29.179814Z",
+        "agent": "Planner Node",
+        "model_version": "deepseek-r1-70b",
+        "action": "Generated Response Draft",
+        "details": "Used RAG & CRM Context. Executed PII mappings safely."
+    },
+    {
+        "timestamp": "2026-05-22T10:08:34.382649Z",
+        "agent": "Supervisor Node",
+        "model_version": "gemini-1.5-flash",
+        "action": "Intent Classified as [RFQ]",
+        "details": "Secured 8 PII tokens."
+    },
+    {
+        "timestamp": "2026-05-22T10:08:57.883236Z",
+        "agent": "Planner Node",
+        "model_version": "deepseek-r1-70b",
+        "action": "Generated Response Draft",
+        "details": "Used RAG & CRM Context. Executed PII mappings safely."
+    },
+    {
+        "timestamp": "2026-05-22T10:10:15.571856Z",
+        "agent": "Supervisor Node",
+        "model_version": "gemini-1.5-flash",
+        "action": "Intent Classified as [RFQ]",
+        "details": "Secured 0 PII tokens."
+    },
+    {
+        "timestamp": "2026-05-22T10:10:22.844043Z",
+        "agent": "Planner Node",
+        "model_version": "deepseek-r1-70b",
+        "action": "Generated Response Draft",
+        "details": "Used RAG & CRM Context. Executed PII mappings safely."
+    },
+    {
+        "timestamp": "2026-05-22T13:18:32.963555Z",
+        "agent": "Supervisor Node",
+        "model_version": "gemini-1.5-flash",
+        "action": "Intent Classified as [RFQ]",
+        "details": "Secured 0 PII tokens."
+    },
+    {
+        "timestamp": "2026-05-22T13:18:42.905198Z",
+        "agent": "Planner Node",
+        "model_version": "deepseek-r1-70b",
+        "action": "Generated Response Draft",
+        "details": "Used RAG & CRM Context. Executed PII mappings safely."
+    },
+    {
+        "timestamp": "2026-05-22T13:20:36.177905Z",
+        "agent": "Execution Node",
+        "model_version": "System API",
+        "action": "Dispatched SMTP Email to workwithnegistudio@gmail.com",
+        "details": "UI payload securely unmasked and sent via SMTP."
+    },
+    {
+        "timestamp": "2026-05-22T14:15:16.602139Z",
+        "agent": "Supervisor Node",
+        "model_version": "gemini-1.5-flash",
+        "action": "Intent Classified as [RFQ]",
+        "details": "Secured 0 PII tokens."
+    },
+    {
+        "timestamp": "2026-05-22T14:15:25.512612Z",
+        "agent": "Planner Node",
+        "model_version": "deepseek-r1-70b",
+        "action": "Generated Response Draft",
+        "details": "Used RAG & CRM Context. Executed PII mappings safely."
+    },
+    {
+        "timestamp": "2026-05-22T14:26:14.431481Z",
+        "agent": "Supervisor Node",
+        "model_version": "gemini-1.5-flash",
+        "action": "Intent Classified as [RFQ]",
+        "details": "Secured 0 PII tokens."
+    },
+    {
+        "timestamp": "2026-05-22T14:26:25.693706Z",
+        "agent": "Planner Node",
+        "model_version": "deepseek-r1-70b",
+        "action": "Generated Response Draft",
+        "details": "Used RAG & CRM Context. Executed PII mappings safely."
+    },
+    {
+        "timestamp": "2026-05-22T14:33:38.862467Z",
+        "agent": "Supervisor Node",
+        "model_version": "gemini-1.5-flash",
+        "action": "Intent Classified as [RFQ]",
+        "details": "Secured 0 PII tokens."
+    },
+    {
+        "timestamp": "2026-05-22T14:33:52.087209Z",
+        "agent": "Planner Node",
+        "model_version": "deepseek-r1-70b",
+        "action": "Generated Response Draft",
+        "details": "Used RAG & CRM Context. Executed PII mappings safely."
+    },
+    {
+        "timestamp": "2026-05-22T14:42:40.578621Z",
+        "agent": "Supervisor Node",
+        "model_version": "gemini-1.5-flash",
+        "action": "Intent Classified as [RFQ]",
+        "details": "Secured 0 PII tokens."
+    },
+    {
+        "timestamp": "2026-05-22T14:42:49.681398Z",
+        "agent": "Planner Node",
+        "model_version": "deepseek-r1-70b",
+        "action": "Generated Response Draft",
+        "details": "Used RAG & CRM Context. Executed PII mappings safely."
+    },
+    {
+        "timestamp": "2026-05-23T14:55:39.452989Z",
+        "agent": "Supervisor Node",
+        "model_version": "gemini-1.5-flash",
+        "action": "Intent Classified as [RFQ]",
+        "details": "Secured 9 PII tokens."
+    },
+    {
+        "timestamp": "2026-05-23T14:56:36.493680Z",
+        "agent": "Planner Node",
+        "model_version": "deepseek-r1-70b",
+        "action": "Generated Response Draft",
+        "details": "Used RAG & CRM Context. Executed PII mappings safely."
+    },
+    {
+        "timestamp": "2026-05-23T15:05:48.789590Z",
+        "agent": "Supervisor Node",
+        "model_version": "gemini-1.5-flash",
+        "action": "Intent Classified as [RFQ]",
+        "details": "Secured 0 PII tokens."
+    },
+    {
+        "timestamp": "2026-05-23T15:06:00.670383Z",
+        "agent": "Planner Node",
+        "model_version": "deepseek-r1-70b",
+        "action": "Generated Response Draft",
+        "details": "Used RAG & CRM Context. Executed PII mappings safely."
+    }
+]
