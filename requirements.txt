@@ -10,3 +10,10 @@ uvicorn
 supabase
 sqlalchemy
 psycopg2-binary
+streamlit
+supabase
+sqlalchemy
+python-dotenv
+psycopg2-binary
+uvicorn
+fastapi
