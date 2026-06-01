@@ -9,18 +9,37 @@ BASE_DIR = os.getcwd()  # Streamlit run location
 BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))  # Backend folder
 PROJECT_ROOT = os.path.dirname(BACKEND_DIR)  # Main project folder
 
+# =====================================================================
+# 🛡️ ENTERPRISE RBAC (Role-Based Access Control) MAPPING
+# =====================================================================
+# If a file is NOT in this list, it defaults to 'admin' only for maximum security.
+FILE_CLEARANCES = {
+    "company_rfq_history.txt": ["sales", "admin", "cfo"],
+    "general_policies.txt": ["support", "sales", "admin", "cfo"],
+    "pricing_compliance.txt": ["admin", "cfo"],  # 🔒 STRICT: Only upper management
+    "cfo_secrets.txt": ["cfo"]                   # 🔒 ULTRA-STRICT
+}
+
 # ----------------------------------------------------
-# TOOL 1: DIRECT LOCAL KNOWLEDGE BASE TOOL
+# TOOL 1: DIRECT LOCAL KNOWLEDGE BASE TOOL (Now with RBAC)
 # ----------------------------------------------------
 @tool
-def fetch_internal_docs(query: str) -> str:
-    """Agentic RAG Tool: Scans knowledge_base directory to find local text files dynamically."""
-    print(f"--> [RAG SYSTEM] Scanning local knowledge files for query: {query}")
+def fetch_internal_docs(query: str, user_role: str = "sales") -> str:
+    """Agentic RAG Tool: Scans knowledge base dynamically based on clearance."""
+    print(f"--> [RAG SYSTEM] Scanning knowledge files for query: '{query}' | Role: {user_role.upper()}")
     
-    file_names = ["pricing_compliance.txt", "company_rfq_history.txt"]
+    file_names = ["pricing_compliance.txt", "company_rfq_history.txt", "general_policies.txt", "cfo_secrets.txt"]
     context_blocks = []
     
     for fname in file_names:
+        # 🛡️ 1. ACCESS CONTROL CHECK (The Metadata Filter)
+        allowed_roles = FILE_CLEARANCES.get(fname, ["admin"]) # Zero-trust default
+        
+        if user_role not in allowed_roles:
+            print(f"🚫 [ACCESS DENIED] User role '{user_role.upper()}' cannot read '{fname}'")
+            continue  # Skip this file completely!
+
+        # 2. FILE PATH RADAR
         possible_paths = [
             os.path.join(PROJECT_ROOT, "knowledge_base", fname),
             os.path.join(BASE_DIR, "knowledge_base", fname),
@@ -35,7 +54,7 @@ def fetch_internal_docs(query: str) -> str:
                         content = f.read().strip()
                         if content:
                             context_blocks.append(f"--- Data from {fname} ---\n{content}")
-                    print(f"[RAG SUCCESS] Found file at: {path}")
+                    print(f"✅ [RAG GRANTED] Read cleared file at: {path}")
                     file_found = True
                     break  # Stop checking other paths for this file if found
                 except Exception as e:
@@ -44,8 +63,8 @@ def fetch_internal_docs(query: str) -> str:
     if context_blocks:
         return "\n\n".join(context_blocks)
         
-    print("⚠️ [RAG ALERT] No local knowledge base files found anywhere.")
-    return "No official pricing or historical data found in local files."
+    print("⚠️ [RAG ALERT] No cleared local knowledge base files found.")
+    return "[SECURITY NOTICE] No accessible pricing or historical data found for your clearance level."
 
 # ----------------------------------------------------
 # TOOL 2: LIVE CRM WEBHOOK + LEDGER FALLBACK TOOL

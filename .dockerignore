@@ -1,0 +1,6 @@
+.env
+__pycache__/
+venv/
+*.db
+soc2_audit_trail.json
+mail_dispatch_ledger.txt

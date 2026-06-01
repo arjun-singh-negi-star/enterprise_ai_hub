@@ -5,3 +5,8 @@ langchain-pinecone
 langgraph
 streamlit
 python-dotenv
+fastapi
+uvicorn
+supabase
+sqlalchemy
+psycopg2-binary

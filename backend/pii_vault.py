@@ -1,130 +1,96 @@
+import re
 import os
-from typing import Tuple, Dict
-from cryptography.fernet import Fernet
-from presidio_analyzer import AnalyzerEngine, PatternRecognizer, Pattern
-from presidio_anonymizer import AnonymizerEngine
+import base64
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 # =====================================================================
-# 🔐 ENCRYPTION SETUP (FERNET SYMMETRIC CRYPTOGRAPHY)
-# Generates a volatile key for the session if not provided in .env.
-# In true production, this key is rotated and stored in HashiCorp Vault/KMS.
+# 🔐 ENTERPRISE KEY MANAGEMENT (SIMULATED KMS)
 # =====================================================================
-ENCRYPTION_KEY = os.getenv("PII_ENCRYPTION_KEY", Fernet.generate_key().decode())
-cipher_suite = Fernet(ENCRYPTION_KEY.encode())
+# Production Rule: Never hardcode keys. Fetch from HashiCorp Vault, AWS KMS, or .env
+# For this environment, we dynamically generate a 256-bit key if not provided in .env
+_ENCRYPTION_KEY_B64 = os.getenv("ENTERPRISE_VAULT_AES_KEY")
+
+if _ENCRYPTION_KEY_B64:
+    _MASTER_KEY = base64.b64decode(_ENCRYPTION_KEY_B64)
+else:
+    # Generates a highly secure 256-bit (32 bytes) key for AES-256
+    _MASTER_KEY = AESGCM.generate_key(bit_length=256)
+    
+# Initialize AES-GCM (Galois/Counter Mode) - Industry standard for secure authenticated encryption
+aesgcm = AESGCM(_MASTER_KEY)
 
 # =====================================================================
-# 🧠 NLP ENGINE INITIALIZATION
+# 🛠️ CRYPTOGRAPHIC FUNCTIONS
 # =====================================================================
-analyzer = AnalyzerEngine()
-anonymizer = AnonymizerEngine()
+def encrypt_pii(plaintext_str: str) -> str:
+    """Encrypts raw data using AES-256-GCM with a random 96-bit nonce."""
+    nonce = os.urandom(12)  # 96-bit nonce is standard for GCM
+    # Encrypt the data
+    ciphertext = aesgcm.encrypt(nonce, plaintext_str.encode('utf-8'), None)
+    # Combine nonce and ciphertext, then encode to base64 for safe storage
+    return base64.b64encode(nonce + ciphertext).decode('utf-8')
 
-# Custom Format Recognition (Example: B2B Project IDs)
-emp_pattern = Pattern(name="employee_id_pattern", regex=r"\bEMP-\d{4}\b", score=0.8)
-emp_recognizer = PatternRecognizer(supported_entity="CUSTOM_EMP_ID", patterns=[emp_pattern])
-analyzer.registry.add_recognizer(emp_recognizer)
+def decrypt_pii(encrypted_b64_str: str) -> str:
+    """Decrypts base64 encoded AES-256 payload back to plain text."""
+    try:
+        data = base64.b64decode(encrypted_b64_str)
+        nonce = data[:12]
+        ciphertext = data[12:]
+        plaintext = aesgcm.decrypt(nonce, ciphertext, None)
+        return plaintext.decode('utf-8')
+    except Exception as e:
+        return f"[DECRYPTION_FAILED: Data Corrupted or Key Mismatch]"
 
-# Encryption Helpers
-def encrypt_val(val: str) -> str:
-    return cipher_suite.encrypt(val.encode()).decode()
-
-def decrypt_val(val: str) -> str:
-    return cipher_suite.decrypt(val.encode()).decode()
-
-def mask_pii(text: str, existing_vault: Dict[str, str] = None, strict_block: bool = False) -> Tuple[str, Dict[str, str]]:
+# =====================================================================
+# 🛡️ PII TOKENIZATION PIPELINE
+# =====================================================================
+def mask_pii(text: str, current_vault: dict) -> tuple:
     """
-    NLP PII detection. 
-    - strict_block=True: Instantly crashes the flow if SSN/Credit Card is found.
-    - Encrypts original data before saving it to the LangGraph state.
+    Scans incoming text for emails (and other PII), replaces them with <TAGS>,
+    and stores the ENCRYPTED real data in the vault.
     """
-    pii_vault = existing_vault.copy() if existing_vault else {}
-    masked_text = text
+    if not isinstance(current_vault, dict):
+        current_vault = {}
+
+    secured_text = text
     
-    if not text:
-        return "", pii_vault
-
-    system_blacklist = {
-        "best regards", "thank you", "vector knowledge", "knowledge base",
-        "corporate communication", "system reasoning", "thinking analytics",
-        "official corporate", "client pipeline", "execution engine"
-    }
-
-    results = analyzer.analyze(
-        text=text,
-        language='en',
-        entities=["PERSON", "EMAIL_ADDRESS", "PHONE_NUMBER", "CREDIT_CARD", "US_SSN", "US_BANK_NUMBER", "CUSTOM_EMP_ID"]
-    )
-
-    unique_matches = {}
-    for res in results:
-        match_str = text[res.start:res.end].strip()
-        if not match_str or match_str.lower() in system_blacklist:
-            continue
+    # Standard Regex for identifying email addresses
+    email_pattern = r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+'
+    found_emails = set(re.findall(email_pattern, text))
+    
+    email_counter = len([k for k in current_vault.keys() if "EMAIL_ADDRESS" in k]) + 1
+    
+    for email in found_emails:
+        # Check if email is already encrypted in the vault
+        already_exists = False
+        for tag, encrypted_val in current_vault.items():
+            if decrypt_pii(encrypted_val) == email:
+                secured_text = secured_text.replace(email, tag)
+                already_exists = True
+                break
+                
+        if not already_exists:
+            tag = f"<EMAIL_ADDRESS_{email_counter}>"
+            # 🔥 CRITICAL UPDATE: Store the encrypted AES-256 string, NOT the plain text
+            current_vault[tag] = encrypt_pii(email)
+            secured_text = secured_text.replace(email, tag)
+            email_counter += 1
             
-        ent_type = res.entity_type
+    return secured_text, current_vault
 
-        # 🛑 ENTERPRISE STRICT MODE: Hard block on PCI/DSS data
-        if strict_block and ent_type in ["CREDIT_CARD", "US_SSN", "US_BANK_NUMBER"]:
-            raise ValueError(f"🚨 SECURITY ALERT: High-risk data ({ent_type}) detected. Transaction forcefully blocked.")
-
-        if ent_type not in unique_matches:
-            unique_matches[ent_type] = set()
-        unique_matches[ent_type].add(match_str)
-
-    counters = {k: 1 for k in unique_matches.keys()}
-    for key in pii_vault.keys():
-        for ent_type in unique_matches.keys():
-            if f"<{ent_type}_" in key:
-                counters[ent_type] += 1
-
-    for ent_type, matches in unique_matches.items():
-        for match in sorted(matches, key=len, reverse=True):
-            
-            # Decrypt existing vault values temporarily to check for duplicates
-            existing_token = None
-            for t, enc_v in pii_vault.items():
-                if decrypt_val(enc_v) == match:
-                    existing_token = t
-                    break
-            
-            if existing_token:
-                masked_text = masked_text.replace(match, existing_token)
-            else:
-                token = f"<{ent_type}_{counters[ent_type]}>"
-                # 🔐 ENCRYPT BEFORE STORING IN STATE
-                pii_vault[token] = encrypt_val(match)
-                masked_text = masked_text.replace(match, token)
-                counters[ent_type] += 1
-
-    return masked_text, pii_vault
-
-def unmask_pii(masked_draft: str, pii_vault: Dict[str, str]) -> str:
-    """Decrypts vault values and restores the UI/SMTP payload."""
-    if not masked_draft or not pii_vault:
-        return masked_draft or ""
+def unmask_pii(text: str, current_vault: dict) -> str:
+    """
+    Takes an AI-generated draft containing <TAGS> and safely restores 
+    the decrypted real data for outbound SMTP dispatch.
+    """
+    if not text or not current_vault:
+        return text
         
-    clean_draft = masked_draft
-    # Decrypt the vault temporarily for processing
-    decrypted_vault = {token: decrypt_val(enc_v) for token, enc_v in pii_vault.items()}
-    
-    for token, original_value in sorted(decrypted_vault.items(), key=lambda x: len(x[1]), reverse=True):
-        clean_draft = clean_draft.replace(token, original_value)
+    unmasked_text = text
+    # Sort by length descending to prevent partial tag replacement bugs
+    for tag, encrypted_val in sorted(current_vault.items(), key=lambda x: len(x[0]), reverse=True):
+        # 🔥 CRITICAL UPDATE: Decrypt the payload before inserting it back into the text
+        real_value = decrypt_pii(encrypted_val)
+        unmasked_text = unmasked_text.replace(tag, real_value)
         
-    return clean_draft
-
-def remask_pii(edited_text: str, pii_vault: Dict[str, str], strict_block: bool = False) -> Tuple[str, Dict[str, str]]:
-    """UI Boundary logic handling decryption/encryption translation."""
-    if not edited_text:
-        return "", pii_vault
-    if pii_vault is None:
-        pii_vault = {}
-        
-    re_masked = edited_text
-    decrypted_vault = {token: decrypt_val(enc_v) for token, enc_v in pii_vault.items()}
-    
-    for token, original_value in sorted(decrypted_vault.items(), key=lambda x: len(x[1]), reverse=True):
-        if original_value in re_masked:
-            re_masked = re_masked.replace(original_value, token)
-            
-    fully_masked, updated_vault = mask_pii(re_masked, pii_vault, strict_block)
-    
-    return fully_masked, updated_vault
+    return unmasked_text

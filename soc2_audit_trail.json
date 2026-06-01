@@ -145,5 +145,55 @@
         "model_version": "deepseek-r1-70b",
         "action": "Generated Response Draft",
         "details": "Used RAG & CRM Context. Executed PII mappings safely."
+    },
+    {
+        "timestamp": "2026-05-30T18:41:06.140468Z",
+        "agent": "Supervisor Node",
+        "model_version": "gemini-1.5-flash",
+        "action": "Intent Classified as [RFQ]",
+        "details": "Secured 6 PII tokens."
+    },
+    {
+        "timestamp": "2026-05-30T18:41:23.386657Z",
+        "agent": "Planner Node",
+        "model_version": "deepseek-r1-70b",
+        "action": "Generated Response Draft",
+        "details": "Used RAG & CRM Context. Executed PII mappings safely."
+    },
+    {
+        "timestamp": "2026-06-01T18:09:35.456160+00:00",
+        "agent": "Supervisor Node",
+        "model_version": "gemini-1.5-flash",
+        "action": "Intent Classified as [RFQ]",
+        "details": "Secured 0 PII tokens.",
+        "previous_hash": "GENESIS_BLOCK_0000000000000000",
+        "current_hash": "8d56a7b59c56ac369491d52fcb97a93f86140d59e73cb7256f6eb3b426f6acbf"
+    },
+    {
+        "timestamp": "2026-06-01T18:09:41.253536+00:00",
+        "agent": "Planner Node",
+        "model_version": "deepseek-r1-70b",
+        "action": "Generated Response Draft",
+        "details": "Used RAG & CRM Context. Executed PII mappings safely.",
+        "previous_hash": "8d56a7b59c56ac369491d52fcb97a93f86140d59e73cb7256f6eb3b426f6acbf",
+        "current_hash": "0db1034e09f7d8ec858a559e84e6cf09d8e6f6607ae987ac062281241e10586e"
+    },
+    {
+        "timestamp": "2026-06-01T18:16:09.196117+00:00",
+        "agent": "Supervisor Node",
+        "model_version": "gemini-1.5-flash",
+        "action": "Intent Classified as [RFQ]",
+        "details": "Secured 0 PII tokens.",
+        "previous_hash": "0db1034e09f7d8ec858a559e84e6cf09d8e6f6607ae987ac062281241e10586e",
+        "current_hash": "81f81be0b5ed9eeeee3c6376711733ed28996952911b0c2b8502083dcc6c8d1a"
+    },
+    {
+        "timestamp": "2026-06-01T18:16:22.101116+00:00",
+        "agent": "Planner Node",
+        "model_version": "deepseek-r1-70b",
+        "action": "Generated Response Draft",
+        "details": "Used RAG & CRM Context. Executed PII mappings safely.",
+        "previous_hash": "81f81be0b5ed9eeeee3c6376711733ed28996952911b0c2b8502083dcc6c8d1a",
+        "current_hash": "8d86829702deeca54d0d54bec3c19c41f090b30dfd6c9a8b769b42afa1dddba7"
     }
 ]

@@ -19,6 +19,33 @@ from backend.graph import build_graph
 
 st.set_page_config(page_title="Arjun's Live AI Email Hub", layout="wide", page_icon="⚡")
 
+# ==========================================
+# 🔒 ENTERPRISE AUTHENTICATION GATE (SUPABASE)
+# ==========================================
+from backend.database import supabase
+
+st.sidebar.title("🔐 Enterprise Login")
+auth_email = st.sidebar.text_input("Admin Email")
+auth_pass = st.sidebar.text_input("Password", type="password")
+
+if st.sidebar.button("Login"):
+    if not supabase:
+        st.sidebar.error("❌ Supabase keys missing. Check .env")
+    else:
+        try:
+            res = supabase.auth.sign_in_with_password({"email": auth_email, "password": auth_pass})
+            st.session_state.user_authenticated = True
+            st.sidebar.success("✅ Logged In Successfully!")
+        except Exception as e:
+            st.sidebar.error("❌ Invalid Credentials")
+
+# 🛑 THE GATE: Stop the app here if not logged in
+if not st.session_state.get("user_authenticated", False):
+    st.warning("⚠️ Access Denied. Please login via the sidebar to access the Enterprise AI Hub.")
+    st.info("Make sure you have created an admin user inside your Supabase Authentication Dashboard first.")
+    st.stop()  # This completely hides the rest of your app!
+# ==========================================
+
 # Persistent state engine setup
 if "app" not in st.session_state:
     st.session_state.app = build_graph()
@@ -31,9 +58,16 @@ if "app" not in st.session_state:
     st.session_state.acknowledged_total = 0
 
 # --- UI NAVIGATION (SAAS SHELL) ---
+st.sidebar.divider()
 st.sidebar.title("🏢 Enterprise SaaS Shell")
 app_mode = st.sidebar.radio("Navigation Menu:", ["📥 Live Agent Mailbox", "🛡️ SOC2 Audit Logs", "📊 System Analytics"])
 st.sidebar.divider()
+
+if st.sidebar.button("Logout"):
+    st.session_state.user_authenticated = False
+    if supabase:
+        supabase.auth.sign_out()
+    st.rerun()
 
 # ----------------------------------------------------
 # PEEK ENGINE & LIVE GMAIL FETCH ENGINE
@@ -286,7 +320,7 @@ if app_mode == "📥 Live Agent Mailbox" and st.session_state.status == "awaitin
     st.divider()
     
     # =================================================================
-    # 🚨 IRONCLAD DLP (DATA LOSS PREVENTION) FILTER
+    # 🚨 IRONCLAD DLP & SEMANTIC GUARDRAILS
     # =================================================================
     st.subheader("📝 Final Outbound Email Editor Window")
     
@@ -314,7 +348,6 @@ if app_mode == "📥 Live Agent Mailbox" and st.session_state.status == "awaitin
             safe_target = safe_target.replace(str(real_val), token)
             
     # 3. 🔥 AGGRESSIVE REGEX FIREWALL 🔥
-    # Agar AI ne koi naya email apni marzi se daal diya ho, toh usko bhi pakdo
     leftover_emails = set(re.findall(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+', secure_draft))
     tag_counter = 3
     for em in leftover_emails:
@@ -330,11 +363,32 @@ if app_mode == "📥 Live Agent Mailbox" and st.session_state.status == "awaitin
         value=secure_draft,
         height=320
     )
+
+    # 4. 🚨 SEMANTIC LEAK GUARD (Output Hallucination Check)
+    leak_detected = False
+    leaked_phrase = ""
+    sensitive_files = ["pricing_compliance.txt", "cfo_secrets.txt"]
+    
+    for fname in sensitive_files:
+        paths_to_check = [os.path.join("knowledge_base", fname), os.path.join(PROJECT_ROOT, "knowledge_base", fname)]
+        for p in paths_to_check:
+            if os.path.exists(p):
+                with open(p, "r", encoding="utf-8") as f:
+                    for line in f:
+                        clean_line = line.strip()
+                        if len(clean_line) > 40 and clean_line.lower() in edited_text.lower():
+                            leak_detected = True
+                            leaked_phrase = clean_line
+                            break
+            if leak_detected: break
+        if leak_detected: break
+
+    if leak_detected:
+        st.error(f"🚨 **CRITICAL SECURITY ALERT: Semantic Data Leak Detected!**\nThe AI has hallucinated and leaked highly confidential internal policy directly into the email draft.\n\n**Leaked Policy:** '{leaked_phrase}'\n\n*The 'Approve' button has been automatically disabled to prevent data loss.*")
     
     c1, c2, c3 = st.columns([3, 3, 4])
     with c1:
-        if st.button("✅ Approve & Escalate (Manager)", type="primary", use_container_width=True):
-            # 🔥 CRITICAL: Update Vault along with the text so Executor knows how to reverse it!
+        if st.button("✅ Approve & Escalate (Manager)", type="primary", use_container_width=True, disabled=leak_detected):
             st.session_state.app.update_state(
                 st.session_state.config,
                 {
@@ -352,7 +406,6 @@ if app_mode == "📥 Live Agent Mailbox" and st.session_state.status == "awaitin
             except Exception as e:
                 st.toast(f"⚠️ API connection failed: {e}")
 
-            # Trigger execution
             st.session_state.app.invoke(None, st.session_state.config)
             st.session_state.status = "completed"
             st.rerun()
@@ -361,7 +414,7 @@ if app_mode == "📥 Live Agent Mailbox" and st.session_state.status == "awaitin
         if st.button("❌ Reject & Rewrite", use_container_width=True):
             st.session_state.app.update_state(
                 st.session_state.config,
-                {"human_feedback": "Manager rejected this draft. Please rewrite with a more formal tone and check discounts."}
+                {"human_feedback": "Manager rejected this draft. Please rewrite with a more formal tone and ensure no internal policies are explicitly stated."}
             )
             st.session_state.status = "waiting_for_input"
             st.rerun()
