@@ -1,6 +1,53 @@
+# =====================================================================
+# 🐳 .dockerignore — Enterprise AI Email Orchestrator
+# =====================================================================
+
+# Secrets (NEVER in Docker image)
 .env
+*.key
+*.pem
+
+# Python cache
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
 venv/
+env/
+.venv/
+
+# Database files (use cloud DB)
 *.db
+*.sqlite
+*.sqlite3
+
+# Audit & ledger logs (runtime generated)
 soc2_audit_trail.json
 mail_dispatch_ledger.txt
+live_crm_cache.json
+
+# Celery beat schedule
+celerybeat-schedule.*
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node (if any)
+node_modules/
+
+# Test files
+*.test.py
+test_*.py

@@ -1,4 +1,5 @@
 import os
+import ssl
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
@@ -19,24 +20,48 @@ else:
     supabase = None
 
 # ==========================================
-# 2. POSTGRESQL CONNECTION POOLING (SQLAlchemy)
+# 2. POSTGRESQL CONNECTION (pg8000 - Pure Python, No DLL)
 # ==========================================
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./enterprise_saas.db")
 
-# Enterprise Connection Pooling settings for PostgreSQL (Supabase)
 if "postgresql" in DATABASE_URL or "postgres" in DATABASE_URL:
+    # ✅ pg8000 = Pure Python PostgreSQL driver
+    # DLL nahi chahiye, Windows Application Control policy block nahi karegi
+    
+    # postgresql:// → postgresql+pg8000:// mein convert karo
+    if "postgresql+pg8000" not in DATABASE_URL:
+        PG8000_URL = DATABASE_URL.replace(
+            "postgresql://", "postgresql+pg8000://"
+        ).replace(
+            "postgres://", "postgresql+pg8000://"
+        )
+    else:
+        PG8000_URL = DATABASE_URL
+
+    # SSL context banao Supabase ke liye
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE  # Development ke liye
+
+    engine = create_engine(
+        PG8000_URL,
+        pool_size=5,
+        max_overflow=10,
+        pool_pre_ping=True,
+        pool_recycle=300,
+        connect_args={
+            "ssl_context": ssl_context
+        }
+    )
+    print("✅ [DB] PostgreSQL engine initialized via pg8000 (Pure Python)")
+
+else:
+    # ✅ SQLite fallback for local development
     engine = create_engine(
         DATABASE_URL,
-        pool_size=10,          # Keeps 10 connections open
-        max_overflow=20,       # Can go up to 30 under heavy load
-        pool_pre_ping=True     # Prevents connection drop errors
-    )
-else:
-    # Fallback for local SQLite development
-    engine = create_engine(
-        DATABASE_URL, 
         connect_args={"check_same_thread": False}
     )
+    print("✅ [DB] SQLite engine initialized")
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()

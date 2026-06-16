@@ -1,19 +1,45 @@
-langchain
-langchain-openai
-langchain-google-genai
-langchain-pinecone
-langgraph
-streamlit
-python-dotenv
-fastapi
-uvicorn
-supabase
-sqlalchemy
-psycopg2-binary
-streamlit
-supabase
-sqlalchemy
-python-dotenv
-psycopg2-binary
-uvicorn
-fastapi
+# =====================================================================
+# 📦 Requirements — Enterprise AI Email Orchestrator
+# =====================================================================
+
+# ── Core Framework ────────────────────────────────────────────────────
+fastapi>=0.100.0
+uvicorn>=0.23.0
+streamlit==1.40.0
+
+# ── LangChain & AI ────────────────────────────────────────────────────
+langchain>=0.2.0
+langchain-core>=0.2.0
+langchain-google-genai>=1.0.0
+langchain-pinecone>=0.1.0
+langchain-text-splitters>=0.2.0
+langgraph>=0.1.0
+
+# ── HTTP & APIs ───────────────────────────────────────────────────────
+requests>=2.31.0
+httpx>=0.24.0
+
+# ── Database ──────────────────────────────────────────────────────────
+sqlalchemy>=2.0.0
+pg8000>=1.30.0          # ✅ Pure Python PostgreSQL driver (no DLL)
+supabase>=2.0.0
+
+# ── Background Tasks ──────────────────────────────────────────────────
+celery>=5.3.0
+redis>=5.0.0
+
+# ── Security & Crypto ─────────────────────────────────────────────────
+cryptography>=41.0.0
+
+# ── PDF Support ───────────────────────────────────────────────────────
+PyPDF2>=3.0.0
+
+# ── Environment ───────────────────────────────────────────────────────
+python-dotenv>=1.0.0
+
+# ── Vector DB ─────────────────────────────────────────────────────────
+pinecone-client>=3.0.0
+
+# ── Utilities ─────────────────────────────────────────────────────────
+python-multipart>=0.0.6
+pydantic>=2.0.0
