@@ -987,5 +987,77 @@
         "details": "Used RAG & CRM Context. PII mappings executed safely.",
         "previous_hash": "00a118394f2e507a59c4cb810bb8b572af3c39dcd629f73a4fcc5fb0048b3d4c",
         "current_hash": "f3d9076f895558800d77dd99f532073c59036c8f3330a5b57788e4373a4736ac"
+    },
+    {
+        "timestamp": "2026-06-18T06:04:08.506109+00:00",
+        "agent": "Supervisor Node",
+        "model_version": "Intent Classified as [SUPPORT]",
+        "action": "google/gemini-2.5-flash",
+        "details": "Secured 1 PII tokens.",
+        "previous_hash": "f3d9076f895558800d77dd99f532073c59036c8f3330a5b57788e4373a4736ac",
+        "current_hash": "ba9cef548e58bc4ea18a33777d6a2ebd3e465802d199046be9c0215fa7fc2c8a"
+    },
+    {
+        "timestamp": "2026-06-18T06:04:10.442643+00:00",
+        "agent": "Planner Node",
+        "model_version": "Generated Response Draft",
+        "action": "deepseek/deepseek-r1\u2192google/gemini-2.5-flash",
+        "details": "Used RAG & CRM Context. PII mappings executed safely.",
+        "previous_hash": "ba9cef548e58bc4ea18a33777d6a2ebd3e465802d199046be9c0215fa7fc2c8a",
+        "current_hash": "d66b6a692116b742d6a38d841b10d5d17d34d7d4492e0c3598a556112569a921"
+    },
+    {
+        "timestamp": "2026-06-18T06:05:09.429430+00:00",
+        "agent": "Supervisor Node",
+        "model_version": "Intent Classified as [SUPPORT]",
+        "action": "google/gemini-2.5-flash",
+        "details": "Secured 1 PII tokens.",
+        "previous_hash": "d66b6a692116b742d6a38d841b10d5d17d34d7d4492e0c3598a556112569a921",
+        "current_hash": "6ca72dc235488ccb8ccd11f9a8b55a9e35e0252e3a18ade4b916d5ac1429dd41"
+    },
+    {
+        "timestamp": "2026-06-18T06:05:11.372113+00:00",
+        "agent": "Planner Node",
+        "model_version": "Generated Response Draft",
+        "action": "deepseek/deepseek-r1\u2192google/gemini-2.5-flash",
+        "details": "Used RAG & CRM Context. PII mappings executed safely.",
+        "previous_hash": "6ca72dc235488ccb8ccd11f9a8b55a9e35e0252e3a18ade4b916d5ac1429dd41",
+        "current_hash": "4641c22bfc85dd2c99a04790331f6e6858de51b3df26cd60f66f8164062505b1"
+    },
+    {
+        "timestamp": "2026-06-18T06:13:59.775145+00:00",
+        "agent": "Supervisor Node",
+        "model_version": "Intent Classified as [SUPPORT]",
+        "action": "gemini-2.5-flash",
+        "details": "Secured 1 PII tokens.",
+        "previous_hash": "4641c22bfc85dd2c99a04790331f6e6858de51b3df26cd60f66f8164062505b1",
+        "current_hash": "2771cd40ff2452a02b6f3a85ee8b423d26f7aace2dea9bf378bf2b6a87d8a888"
+    },
+    {
+        "timestamp": "2026-06-18T06:14:01.121355+00:00",
+        "agent": "Planner Node",
+        "model_version": "Generated Response Draft",
+        "action": "deepseek/deepseek-r1\u2192gemini-2.5-flash",
+        "details": "Used RAG & CRM Context.",
+        "previous_hash": "2771cd40ff2452a02b6f3a85ee8b423d26f7aace2dea9bf378bf2b6a87d8a888",
+        "current_hash": "e0280573b2a609778b96d5d075bc5e6d2c406e58bfbf4a8cd32e36894b689c18"
+    },
+    {
+        "timestamp": "2026-06-18T06:36:45.695934+00:00",
+        "agent": "Supervisor Node",
+        "model_version": "Intent Classified as [SPAM]",
+        "action": "gemini-direct",
+        "details": "Secured 1 PII tokens.",
+        "previous_hash": "e0280573b2a609778b96d5d075bc5e6d2c406e58bfbf4a8cd32e36894b689c18",
+        "current_hash": "c63f634b2fd7990dd626e83fd37c6dfc64462c79816c3e80d73409f6819c2cfa"
+    },
+    {
+        "timestamp": "2026-06-18T06:37:03.746534+00:00",
+        "agent": "Planner Node",
+        "model_version": "Generated Response Draft",
+        "action": "deepseek-r1\u2192gemini-direct",
+        "details": "Used RAG & CRM Context.",
+        "previous_hash": "c63f634b2fd7990dd626e83fd37c6dfc64462c79816c3e80d73409f6819c2cfa",
+        "current_hash": "fe95f4d82486095da601c814a9229d03fdf5da7c49052db8e81cdd6aed48c6f9"
     }
 ]
