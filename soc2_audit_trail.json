@@ -1059,5 +1059,50 @@
         "details": "Used RAG & CRM Context.",
         "previous_hash": "c63f634b2fd7990dd626e83fd37c6dfc64462c79816c3e80d73409f6819c2cfa",
         "current_hash": "fe95f4d82486095da601c814a9229d03fdf5da7c49052db8e81cdd6aed48c6f9"
+    },
+    {
+        "timestamp": "2026-06-18T09:23:11.697555+00:00",
+        "agent": "Supervisor Node",
+        "model_version": "Intent Classified as [SPAM]",
+        "action": "gemini-direct",
+        "details": "Secured 1 PII tokens.",
+        "previous_hash": "fe95f4d82486095da601c814a9229d03fdf5da7c49052db8e81cdd6aed48c6f9",
+        "current_hash": "1a725c27380b0e9f3d0173eb7ec9803c42b6c9d8bc5b7cb971f324e3373fd3bd"
+    },
+    {
+        "timestamp": "2026-06-18T09:23:25.984991+00:00",
+        "agent": "Planner Node",
+        "model_version": "Generated Response Draft",
+        "action": "deepseek-r1\u2192gemini-direct",
+        "details": "Used RAG & CRM Context.",
+        "previous_hash": "1a725c27380b0e9f3d0173eb7ec9803c42b6c9d8bc5b7cb971f324e3373fd3bd",
+        "current_hash": "90b3439cb836af46278e297f67281af22cbc7a911671cad2f002bcc3cedcbda5"
+    },
+    {
+        "timestamp": "2026-06-18T09:26:42.704511+00:00",
+        "agent": "Supervisor Node",
+        "model_version": "Intent Classified as [SPAM]",
+        "action": "gemini-direct",
+        "details": "Secured 1 PII tokens.",
+        "previous_hash": "90b3439cb836af46278e297f67281af22cbc7a911671cad2f002bcc3cedcbda5",
+        "current_hash": "df73ac4d4f9cea3c3711867fd657ea88a24a1e4e33a3e3052eaddf1ccc56ccdc"
+    },
+    {
+        "timestamp": "2026-06-18T09:26:57.640097+00:00",
+        "agent": "Planner Node",
+        "model_version": "Generated Response Draft",
+        "action": "deepseek-r1\u2192gemini-direct",
+        "details": "Used RAG & CRM Context.",
+        "previous_hash": "df73ac4d4f9cea3c3711867fd657ea88a24a1e4e33a3e3052eaddf1ccc56ccdc",
+        "current_hash": "65143a3383a29bc593fe4d07654a137a15df43276da7e45bed493cce55014f0a"
+    },
+    {
+        "timestamp": "2026-06-18T09:28:26.537431+00:00",
+        "agent": "Execution Node",
+        "model_version": "Dispatched SMTP Email to workwithnegistudio@gmail.com",
+        "action": "System API",
+        "details": "Subject: Information About SwiftCart - Your E-commerce Partner",
+        "previous_hash": "65143a3383a29bc593fe4d07654a137a15df43276da7e45bed493cce55014f0a",
+        "current_hash": "2b77e0a4863f52347524a59842df970b5034d124fef265bea7d73e1e41b08387"
     }
 ]
