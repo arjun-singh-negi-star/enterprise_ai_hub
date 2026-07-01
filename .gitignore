@@ -48,3 +48,11 @@ Thumbs.db
 
 # ── Docker ────────────────────────────────────────────────────────────
 *.log
+
+.db
+
+celerybeat-schedule.bak/
+
+.dat, mail_dispatch_ledger.txt 
+
+soc2_audit_trail.json
